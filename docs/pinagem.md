@@ -1,214 +1,273 @@
-# 📌 Documentação de Pinagem - Sistema de Calibração
+# 📌 Diagrama de Pinagem - Sistema de Calibração de Máquinas de Solda
 
-> **Autores:** Suamí Santos, Luís Guilherme, Patrick Melo, Marcos Vinícius e Matheus Machado  
-> **Última atualização:** 27/11/2025  
-> **Microcontrolador:** Arduino UNO (ATmega328P)
+## 🔌 Arduino Mega 2560 - Pinout Completo
 
----
+### 📊 Tabela de Conexões
 
-## 📊 Resumo de Utilização dos Pinos
-
-| Tipo | Pinos Utilizados | Pinos Disponíveis |
-|------|------------------|-------------------|
-| Analógicos | A0, A1, A2, A3, A4, A5 | - |
-| Digitais | D2, D3, D4, D5, D13 | D6, D7, D8, D9, D10, D11, D12 |
-| I2C | A4 (SDA), A5 (SCL) | - |
-| Serial | D0 (RX), D1 (TX) | - (evitar usar) |
-
----
-
-## 🌡️ Entradas Analógicas
-
-| Componente | Pino | Faixa | Fórmula de Conversão | Status |
-|------------|------|-------|----------------------|--------|
-| LM35 (temperatura) | A0 | 0-100°C | `(valor * 5.0 / 1023.0) / 0.01` | ✅ TESTADO |
-| RV1 (tensão) | A1 | 0-50V | `(valor * 5.0 / 1023.0) * 10.0` | ✅ TESTADO |
-| RV3 (corrente) | A2 | 0-500A | `(valor * 5.0 / 1023.0) * 100.0` | ✅ TESTADO |
-| RV4 (fluxo gás) | A3 | 0-20 L/min | `(valor * 5.0 / 1023.0) * 4.0` | ✅ TESTADO |
-
-### Detalhamento dos Sensores
-
-#### 🌡️ LM35 - Sensor de Temperatura (A0)
-
-- **Função:** Monitoramento da temperatura da peça/ambiente
-- **Tensão de operação:** 4V a 30V
-- **Sensibilidade:** 10mV/°C
-- **Precisão:** ±0.5°C (a 25°C)
-- **Conexão:**
-  - Pino 1 (VCC) → 5V
-  - Pino 2 (OUT) → A0
-  - Pino 3 (GND) → GND
-
-#### ⚡ RV1 - Simulador de Tensão de Soldagem (A1)
-
-- **Função:** Simula a leitura do sensor de tensão do arco
-- **Faixa simulada:** 0V a 50V
-- **Resolução:** ~0.049V por incremento ADC
-- **Aplicação real:** Substituir por divisor de tensão adequado
-
-#### 🔌 RV3 - Simulador de Corrente de Soldagem (A2)
-
-- **Função:** Simula a leitura do sensor de corrente
-- **Faixa simulada:** 0A a 500A
-- **Resolução:** ~0.49A por incremento ADC
-- **Aplicação real:** Substituir por sensor de efeito Hall (ex: ACS712)
-
-#### 💨 RV4 - Simulador de Fluxo de Gás (A3)
-
-- **Função:** Simula a leitura do sensor de vazão de gás
-- **Faixa simulada:** 0 a 20 L/min
-- **Resolução:** ~0.02 L/min por incremento ADC
-- **Aplicação real:** Substituir por sensor de fluxo (ex: YF-S201)
+| Pino | Tipo | Componente | Sinal | Descrição |
+|---|---|---|---|---|
+| **A0** | Analógico | LM35 | Vout | Sensor de temperatura (0-100°C) |
+| **A1** | Analógico | RV1 (POT 10kΩ) | Wiper | Simulação tensão (0-100V) |
+| **A2** | Analógico | RV2 (POT 10kΩ) | Wiper | Simulação corrente (0-500A) |
+| **A3** | Analógico | RV3 (POT 10kΩ) | Wiper | Simulação fluxo gás (0-20 L/min) |
+| **A4** | Analógico | RV4 (POT 10kΩ) | Wiper | Simulação RPM arame (0-3000 RPM) |
+| **2** | Digital | BTN_MENU | Input | Botão navegação telas (Pull-up) |
+| **3** | Digital | BTN_UP | Input | Botão UP / Liga sistema (Pull-up) |
+| **4** | Digital | BTN_DOWN | Input | Botão DOWN / Modo SMAW/MIG (Pull-up) |
+| **5** | Digital | BTN_ENTER | Input | Botão ENTER / ACK alarmes (Pull-up) |
+| **6** | Digital | RL1 (Relé) | Output | Sistema Principal ON/OFF |
+| **7** | Digital | RL2 (Relé) | Output | Modo SMAW (OFF) / MIG (ON) |
+| **8** | Digital | RL3 (Relé) | Output | Ventilação emergência |
+| **9** | Digital | RL4 (Relé) | Output | Válvula de gás (automático) |
+| **10** | Digital | MAX7219 | CS | Chip Select display 7-seg |
+| **11** | Digital | MAX7219 | DIN | Data In display 7-seg (SPI) |
+| **12** | Digital | LED Status | Output | LED indicador status (220Ω) |
+| **13** | Digital | MAX7219 | CLK | Clock display 7-seg (SPI) |
+| **14** | Digital | RL5 (Relé) | Output | Segurança (sempre ON) |
+| **20** | Digital | LCD I2C | SDA | Dados I2C (LCD 16x2) |
+| **21** | Digital | LCD I2C | SCL | Clock I2C (LCD 16x2) |
+| **5V** | Power | Múltiplos | VCC | Alimentação componentes |
+| **GND** | Power | Múltiplos | GND | Terra comum |
 
 ---
 
-## 🖥️ Interface I2C
+## 🖼️ Diagrama Visual ASCII
 
-| Componente | Pino | Endereço I2C | Status |
-|------------|------|--------------|--------|
-| PCF8574 (LCD 16x2) | A4 (SDA), A5 (SCL) | 0x20 | ✅ FUNCIONANDO |
-
-### LCD 16x2 via PCF8574
-
-- **Display:** LCD 16 colunas x 2 linhas
-- **Interface:** I2C através do expansor PCF8574
-- **Endereço padrão:** 0x20 (pode variar: 0x27, 0x3F)
-- **Biblioteca:** LiquidCrystal_I2C
-
-```cpp
-#include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x20, 16, 2);
-```
-
----
-
-## 🔘 Botões (Interface Local)
-
-| Botão | Pino | Resistor Pull-Down | Função | Status |
-|-------|------|--------------------|--------|--------|
-| BTN_MENU | D2 | R2 (10kΩ) | Navegação entre telas | ✅ TESTADO |
-| BTN_UP | D3 | R3 (10kΩ) | Incrementa valores | ✅ TESTADO |
-| BTN_DOWN | D4 | R4 (10kΩ) | Decrementa valores | ✅ TESTADO |
-| BTN_ENTER | D5 | R5 (10kΩ) | Confirma seleção | ✅ TESTADO |
-
-### Configuração dos Botões
-
-```cpp
-#define BTN_MENU   2
-#define BTN_UP     3
-#define BTN_DOWN   4
-#define BTN_ENTER  5
-
-void setup() {
-  pinMode(BTN_MENU, INPUT);   // Pull-down externo (R2 = 10kΩ)
-  pinMode(BTN_UP, INPUT);     // Pull-down externo (R3 = 10kΩ)
-  pinMode(BTN_DOWN, INPUT);   // Pull-down externo (R4 = 10kΩ)
-  pinMode(BTN_ENTER, INPUT);  // Pull-down externo (R5 = 10kΩ)
-}
-```
-
-> **Nota:** Os botões usam resistores pull-down externos de 10kΩ. Lógica: HIGH = pressionado, LOW = solto.
+text
+                    ARDUINO MEGA 2560
+                ┌─────────────────────┐
+                │                     │
+LM35 ───────────┤ A0                  │
+RV1 (V) ────────┤ A1                  │
+RV2 (A) ────────┤ A2                  │
+RV3 (L/min) ────┤ A3                  │
+RV4 (RPM) ──────┤ A4                  │
+                │                     │
+BTN_MENU ───────┤ 2                   │
+BTN_UP ─────────┤ 3                   │
+BTN_DOWN ───────┤ 4                   │
+BTN_ENTER ──────┤ 5                   │
+                │                     │
+RL1 (Sistema) ──┤ 6                   │
+RL2 (Modo) ─────┤ 7                   │
+RL3 (Ventil.) ──┤ 8                   │
+RL4 (Gás) ──────┤ 9                   │
+MAX7219 CS ─────┤ 10                  │
+MAX7219 DIN ────┤ 11                  │
+LED Status ─────┤ 12                  │
+MAX7219 CLK ────┤ 13                  │
+RL5 (Seg.) ─────┤ 14                  │
+                │                     │
+LCD SDA ────────┤ 20                  │
+LCD SCL ────────┤ 21                  │
+                │                     │
+5V ─────────────┤ 5V        GND ─────┤ GND
+                │                     │
+                └─────────────────────┘
+text
 
 ---
 
-## 💡 Saídas Digitais
+## 📐 Conexões Detalhadas por Subsistema
 
-| Componente | Pino | Observação | Status |
-|------------|------|------------|--------|
-| LED teste | D13 | Resistor 220Ω (R1) | ✅ FUNCIONANDO |
+### 🌡️ Subsistema de Sensores
 
-### Configuração das Saídas
+#### LM35 (Temperatura)
+LM35
+┌─────┐
+│ 1 ├────► 5V (VCC)
+│ 2 ├────► A0 (Vout)
+│ 3 ├────► GND
+└─────┘
 
-```cpp
-#define LED_TESTE  13
+text
 
-void setup() {
-  pinMode(LED_TESTE, OUTPUT);
-  digitalWrite(LED_TESTE, LOW);
-}
-```
+#### Potenciômetros (4x)
+POT 10kΩ
+┌─────┐
+│ 1 ├────► 5V
+│ 2 ├────► A1/A2/A3/A4 (Wiper)
+│ 3 ├────► GND
+└─────┘
 
----
+RV1 → A1 (Tensão)
+RV2 → A2 (Corrente)
+RV3 → A3 (Fluxo Gás)
+RV4 → A4 (RPM Arame)
 
-## 📡 Comunicação Serial
-
-| Interface | Pinos | Baud Rate | Função |
-|-----------|-------|-----------|--------|
-| Serial (USB) | D0 (RX), D1 (TX) | 9600 | Comunicação com supervisório Python |
-
-### Protocolo de Comunicação
-
-- **Formato:** String separada por vírgula
-- **Envio:** `TEMP,TENSAO,CORRENTE,FLUXO,STATUS\n`
-- **Exemplo:** `25.5,32.1,180.0,12.5,OK\n`
+text
 
 ---
 
-## 🔓 Pinos Disponíveis
+### 🖥️ Subsistema de Displays
 
-| Pino | Tipo | Observação |
-|------|------|------------|
-| D6 | Digital/PWM | Livre para expansão |
-| D7 | Digital | Livre para expansão |
-| D8 | Digital | Livre para expansão |
-| D9 | Digital/PWM | Livre para expansão |
-| D10 | Digital/PWM | Livre para expansão |
-| D11 | Digital/PWM | Livre para expansão |
-| D12 | Digital | Livre para expansão |
+#### Display MAX7219 (8 dígitos 7-seg)
+MAX7219
+┌─────────┐
+│ VCC ├────► 5V
+│ GND ├────► GND
+│ DIN ├────► Pino 11 (MOSI)
+│ CS ├────► Pino 10
+│ CLK ├────► Pino 13 (SCK)
+└─────────┘
 
-> **⚠️ Evitar usar:** D0 e D1 (reservados para comunicação Serial/USB)
+Layout: [CCC] [VVV]
+^^^ ^^^
+Corrente Tensão
 
----
+text
 
-## 🔌 Diagrama de Conexões
+#### LCD 16x2 I2C
+LCD I2C (Endereço 0x20)
+┌─────────┐
+│ VCC ├────► 5V
+│ GND ├────► GND
+│ SDA ├────► Pino 20
+│ SCL ├────► Pino 21
+└─────────┘
 
-```text
-                    ARDUINO UNO
-                   +------------+
-              A0 --|            |-- D13 (LED_TESTE + R1)
-    LM35 ----→     |            |
-              A1 --|            |-- D12 (livre)
-    RV1  ----→     |            |
-              A2 --|            |-- D11 (livre)
-    RV3  ----→     |            |
-              A3 --|            |-- D10 (livre)
-    RV4  ----→     |            |
-              A4 --|            |-- D9  (livre)
-    SDA  ←---→     |            |
-              A5 --|            |-- D8  (livre)
-    SCL  ←---→     |            |
-                   |            |-- D7  (livre)
-              5V --|            |-- D6  (livre)
-                   |            |-- D5  (BTN_ENTER + R5)
-             GND --|            |-- D4  (BTN_DOWN + R4)
-                   |            |-- D3  (BTN_UP + R3)
-             VIN --|            |-- D2  (BTN_MENU + R2)
-                   |            |-- D1  (TX) ⚠️
-                   |            |-- D0  (RX) ⚠️
-                   +------------+
-```
+Layout: [16 caracteres]
+[16 caracteres]
+
+text
 
 ---
 
-## ⚠️ Notas Importantes
+### 🔘 Subsistema de Entrada (Botões)
 
-1. **Alimentação:** O Arduino deve ser alimentado com fonte externa de 7-12V para suportar todos os componentes
-2. **Resistores Pull-Down:** Todos os botões usam resistores de 10kΩ para GND (R2, R3, R4, R5)
-3. **LED:** O LED de teste usa resistor de 220Ω (R1) em série
-4. **Sensores reais:** Os potenciômetros (RV1, RV3, RV4) são simuladores - substituir por sensores adequados na versão final
-5. **I2C:** Verificar endereço do PCF8574 com scanner I2C se não funcionar
-6. **Serial:** Evitar usar D0 e D1 para outros fins - reservados para comunicação USB
+text
+    Botão (4x) com Pull-up Interno
+    ┌─────┐
+    │     │
+Pino ───┤ ● ├─── GND
+│ │
+└─────┘
+
+BTN_MENU → Pino 2 (INPUT_PULLUP)
+BTN_UP → Pino 3 (INPUT_PULLUP)
+BTN_DOWN → Pino 4 (INPUT_PULLUP)
+BTN_ENTER → Pino 5 (INPUT_PULLUP)
+
+Lógica: HIGH = não pressionado
+LOW = pressionado
+
+text
 
 ---
 
-## 📋 Checklist de Testes
+### 🔌 Subsistema de Relés
 
-- [x] LM35 - Leitura de temperatura
-- [x] RV1 - Simulação de tensão
-- [x] RV3 - Simulação de corrente
-- [x] RV4 - Simulação de fluxo
-- [x] LCD I2C - Display funcionando
-- [ ] Botões - Entradas digitais
-- [ ] Relés - Saídas de potência
-- [ ] PWM - Saídas analógicas
-- [ ] Serial - Comunicação com PC
+Relé Nativo Proteus (5x)
+┌──────────┐
+│ COIL+ ├────► Pino Digital
+│ COIL- ├────► GND
+│ │
+│ COM │ (não conectado na simulação)
+│ NO │ (não conectado na simulação)
+│ NC │ (não conectado na simulação)
+└──────────┘
+
+Tensão Bobina: 5V
+Lógica: HIGH = Relé LIGADO
+LOW = Relé DESLIGADO
+
+RL1 → Pino 6 (Sistema Principal)
+RL2 → Pino 7 (Modo SMAW/MIG)
+RL3 → Pino 8 (Ventilação)
+RL4 → Pino 9 (Válvula Gás)
+RL5 → Pino 14 (Segurança)
+
+text
+
+---
+
+### 💡 Subsistema de Indicação (LED)
+
+text
+    LED Status
+    ┌─────┐
+Pino 12 ─┤>├───[220Ω]─── GND
+└─────┘
+
+Comportamento:
+
+Pisca LENTO (500ms): Sistema normal
+
+Pisca RÁPIDO (100ms): Alarme ativo
+
+text
+
+---
+
+## ⚡ Alimentação
+
+Fonte de Alimentação
+5V ────► VCC (múltiplos componentes)
+GND ────► GND (terra comum)
+
+Consumo Estimado:
+
+Arduino Mega: ~50 mA
+
+MAX7219: ~100 mA
+
+LCD I2C: ~20 mA
+
+LM35: ~60 µA
+
+LED: ~10 mA
+
+Relés (5x): 0 mA (simulação)
+───────────────────
+TOTAL: ~180 mA
+
+text
+
+---
+
+## 🔧 Notas de Implementação
+
+### ⚠️ Importante - Simulação vs Físico
+
+#### Na Simulação (Proteus):
+- ✅ Relés conectados **diretamente** aos pinos
+- ✅ Não precisa transistor/diodo
+- ✅ Pull-up interno dos botões funciona
+
+#### No Hardware Físico (N3):
+- ⚠️ Relés precisam de **transistor BC547** + **diodo 1N4007**
+- ⚠️ Resistor **1kΩ** na base do transistor
+- ⚠️ Fonte de alimentação externa para relés
+
+---
+
+## 📋 Checklist de Conexões
+
+### Antes de Ligar:
+
+- [ ] Todos os GNDs conectados (terra comum)
+- [ ] Alimentação 5V nos componentes corretos
+- [ ] LM35 com polaridade correta (Vout no meio)
+- [ ] Endereço I2C do LCD verificado (0x20 ou 0x27)
+- [ ] Botões com pull-up ativado no código
+- [ ] Tensão dos relés configurada para 5V no Proteus
+- [ ] MAX7219 com DIN, CLK, CS corretos
+- [ ] Nenhum curto-circuito visível
+
+---
+
+## 🐛 Troubleshooting
+
+| Problema | Possível Causa | Solução |
+|---|---|---|
+| LCD em branco | Endereço I2C errado | Testar 0x20 ou 0x27 |
+| Display 7-seg apagado | SPI mal conectado | Verificar pinos 10,11,13 |
+| Botões não respondem | Pull-up não ativado | Usar INPUT_PULLUP |
+| Relés não acionam | Tensão bobina errada | Configurar 5V no Proteus |
+| Leitura analógica errada | Referência errada | Verificar fórmulas no código |
+| LM35 lendo errado | Pinos trocados | Vout no pino central |
+
+---
+
+**Última atualização:** 08/12/2025  
+**Versão:** 1.0
