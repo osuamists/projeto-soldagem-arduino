@@ -334,12 +334,12 @@ Este projeto foi desenvolvido para fins educacionais na disciplina de Microcontr
 
 ---
 
-## 👤 Autor
+## 👤 Autores
 
-**[Seu Nome]**
+**[Suamí Gomes Santos]**
 
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-- Email: seu.email@exemplo.com
+- GitHub: [@osuamists](https://github.com/osuamists)
+- Email: suamisantos34@gmail.com
 
 ---
 

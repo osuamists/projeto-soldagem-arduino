@@ -73,16 +73,19 @@ text
 ### 🌡️ Subsistema de Sensores
 
 #### LM35 (Temperatura)
+
+```text
 LM35
 ┌─────┐
 │ 1 ├────► 5V (VCC)
 │ 2 ├────► A0 (Vout)
 │ 3 ├────► GND
 └─────┘
-
-text
+```
 
 #### Potenciômetros (4x)
+
+```text
 POT 10kΩ
 ┌─────┐
 │ 1 ├────► 5V
@@ -94,14 +97,15 @@ RV1 → A1 (Tensão)
 RV2 → A2 (Corrente)
 RV3 → A3 (Fluxo Gás)
 RV4 → A4 (RPM Arame)
-
-text
+```
 
 ---
 
 ### 🖥️ Subsistema de Displays
 
 #### Display MAX7219 (8 dígitos 7-seg)
+
+```text
 MAX7219
 ┌─────────┐
 │ VCC ├────► 5V
@@ -115,9 +119,11 @@ Layout: [CCC] [VVV]
 ^^^ ^^^
 Corrente Tensão
 
-text
+```
 
 #### LCD 16x2 I2C
+
+```text
 LCD I2C (Endereço 0x20)
 ┌─────────┐
 │ VCC ├────► 5V
@@ -128,8 +134,7 @@ LCD I2C (Endereço 0x20)
 
 Layout: [16 caracteres]
 [16 caracteres]
-
-text
+```
 
 ---
 
@@ -229,12 +234,14 @@ text
 
 ### ⚠️ Importante - Simulação vs Físico
 
-#### Na Simulação (Proteus):
+#### Na Simulação (Proteus)
+
 - ✅ Relés conectados **diretamente** aos pinos
 - ✅ Não precisa transistor/diodo
 - ✅ Pull-up interno dos botões funciona
 
-#### No Hardware Físico (N3):
+#### No Hardware Físico (N3)
+
 - ⚠️ Relés precisam de **transistor BC547** + **diodo 1N4007**
 - ⚠️ Resistor **1kΩ** na base do transistor
 - ⚠️ Fonte de alimentação externa para relés
@@ -243,7 +250,7 @@ text
 
 ## 📋 Checklist de Conexões
 
-### Antes de Ligar:
+### Antes de Ligar
 
 - [ ] Todos os GNDs conectados (terra comum)
 - [ ] Alimentação 5V nos componentes corretos
